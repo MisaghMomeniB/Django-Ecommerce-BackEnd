@@ -59,3 +59,32 @@ class CartView(APIView):
             item.delete()
             return Response({"message": "محصول از سبد حذف شد."})
         return Response({"error": "محصول در سبد پیدا نشد."}, status=404)
+    
+class CreateOrderView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    @transaction.atomic
+    def post(self, request):
+        cart = Cart.objects.filter(user=request.user).first()
+        if not cart or not cart.items.exists():
+            return Response({'error': 'سبد خرید خالی است'}, status=400)
+
+        order = Order.objects.create(user=request.user)
+
+        for item in cart.items.all():
+            OrderItem.objects.create(
+                order=order,
+                product=item.product,
+                quantity=item.quantity
+            )
+        # پاک کردن سبد خرید
+        cart.items.all().delete()
+
+        return Response({'message': 'سفارش ثبت شد'}, status=201)
+
+class UserOrdersListView(generics.ListAPIView):
+    permission_classes = [IsAuthenticated]
+    serializer_class = OrderSerializer
+
+    def get_queryset(self):
+        return Order.objects.filter(user=self.request.user).order_by('-created_at')
