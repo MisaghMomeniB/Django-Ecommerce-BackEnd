@@ -23,7 +23,7 @@ class Product(models.Model):
     def __str__(self):
         return self.name
     
-User = settings.AUT_USER_MODEL
+User = settings.AUTH_USER_MODEL
 
 class Cart(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE, related_name='cart')
@@ -38,4 +38,4 @@ class CartItem(models.Model):
     quantity = models.PositiveIntegerField(default=1)
 
     def __str__(self):
-        return f"{self.quantity} x {self.product.name}
+        return f"{self.quantity} x {self.product.name}"
