@@ -1,0 +1,16 @@
+{% extends 'base.html' %}
+{% block content %}
+<h2>{{ product.name }}</h2>
+<img src="{{ product.image.url }}" width="200">
+<p>{{ product.description }}</p>
+<p>قیمت: {{ product.price }} تومان</p>
+
+<form method="post" action="{% url 'add_to_cart' product.id %}">
+  {% csrf_token %}
+  <label>تعداد:</label>
+  <input type="number" name="quantity" value="1" min="1">
+  <button type="submit">افزودن به سبد</button>
+</form>
+
+<a href="/">⬅ بازگشت به محصولات</a>
+{% endblock %}
