@@ -1,0 +1,19 @@
+body {
+    font-family: sans-serif;
+    margin: 2rem;
+    direction: rtl;
+}
+header {
+    border-bottom: 1px solid #ccc;
+    padding-bottom: 1rem;
+    margin-bottom: 2rem;
+}
+nav a {
+    margin-left: 1rem;
+    text-decoration: none;
+    color: blue;
+}
+ul {
+    list-style-type: none;
+    padding: 0;
+}
