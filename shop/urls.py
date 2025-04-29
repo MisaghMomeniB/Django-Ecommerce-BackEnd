@@ -1,7 +1,7 @@
 from django.urls import path
 from .views import ProtectedTestView
 from .views import CartView
-from .views import CreateOrderView, UserOrdersListView
+from .views import CreateOrderView, UserOrdersListView, PayOrderView
 
 urlpatterns = [
     path('protected/', ProtectedTestView.as_view(), name='protected'),
