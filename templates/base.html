@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="fa">
+<head>
+    <meta charset="UTF-8">
+    <title>{% block title %}فروشگاه{% endblock %}</title>
+    <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+    <header>
+        <h1><a href="/">🛍 فروشگاه من</a></h1>
+        <nav>
+            <a href="/">خانه</a>
+            {% if user.is_authenticated %}
+                <a href="/cart/">سبد خرید</a>
+                <a href="/orders/">سفارشات</a>
+                <a href="/logout/">خروج</a>
+            {% else %}
+                <a href="/login/">ورود</a>
+                <a href="/register/">ثبت‌نام</a>
+            {% endif %}
+        </nav>
+    </header>
+
+    <main>
+        {% block content %}{% endblock %}
+    </main>
+</body>
+</html>
