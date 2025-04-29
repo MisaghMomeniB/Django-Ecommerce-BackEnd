@@ -18,7 +18,7 @@
                 <a href="/cart/">سبد خرید</a>
                 <a href="/orders/">سفارشات</a>
                 <span>سلام {{ user.username }}</span>
-                <a href="/logout/">خروج</a>
+                <a href="{% url 'logout' %}">خروج</a>
             {% else %}
                 <a href="/login/">ورود</a>
                 <a href="/register/">ثبت‌نام</a>
