@@ -1,9 +1,13 @@
+{% load static %}
+
 <!DOCTYPE html>
 <html lang="fa">
 <head>
     <meta charset="UTF-8">
     <title>{% block title %}فروشگاه{% endblock %}</title>
-    <link rel="stylesheet" href="/static/style.css">
+    <!-- <link rel="stylesheet" href="../static/style.css"> -->
+    <link rel="stylesheet" href="{% static 'style.css' %}">
+
 </head>
 <body>
     <header>
@@ -13,6 +17,7 @@
             {% if user.is_authenticated %}
                 <a href="/cart/">سبد خرید</a>
                 <a href="/orders/">سفارشات</a>
+                <span>سلام {{ user.username }}</span>
                 <a href="/logout/">خروج</a>
             {% else %}
                 <a href="/login/">ورود</a>
