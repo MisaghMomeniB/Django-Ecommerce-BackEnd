@@ -1,0 +1,18 @@
+{% extends 'base.html' %}
+{% block content %}
+<h2>🛒 سبد خرید</h2>
+
+{% if items %}
+  <ul>
+    {% for item in items %}
+      <li>{{ item.product.name }} - {{ item.quantity }} عدد</li>
+    {% endfor %}
+  </ul>
+  <form method="post" action="{% url 'checkout' %}">
+    {% csrf_token %}
+    <button type="submit">ثبت سفارش</button>
+  </form>
+{% else %}
+  <p>سبد خرید شما خالی است.</p>
+{% endif %}
+{% endblock %}
