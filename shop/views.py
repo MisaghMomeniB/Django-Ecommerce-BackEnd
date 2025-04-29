@@ -1,4 +1,6 @@
 from django.shortcuts import render
+from django.shortcuts import render, redirect, get_object_or_404
+from .models import Product, Cart, CartItem
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated
@@ -104,3 +106,39 @@ class PayOrderView(APIView):
         order.save()
 
         return Response({"message": "پرداخت انجام شد"})
+    
+def product_list(request):
+    products = Product.objects.all()
+    return render(request, 'shop/product_list.html', {'products': products})
+
+def product_detail(request, product_id):
+    product = get_object_or_404(Product, id=product_id)
+    return render(request, 'shop/product_detail.html', {'product': product})
+
+def add_to_cart(request, product_id):
+    if request.method == 'POST':
+        quantity = int(request.POST.get('quantity', 1))
+        product = get_object_or_404(Product, id=product_id)
+        cart, created = Cart.objects.get_or_create(user=request.user)
+        item, created = CartItem.objects.get_or_create(cart=cart, product=product)
+        item.quantity += quantity
+        item.save()
+    return redirect('cart')
+
+def view_cart(request):
+    cart, created = Cart.objects.get_or_create(user=request.user)
+    items = cart.items.all()
+    return render(request, 'shop/cart.html', {'items': items})
+
+from django.views.decorators.csrf import csrf_exempt
+
+@csrf_exempt
+def checkout(request):
+    cart = Cart.objects.get(user=request.user)
+    if request.method == 'POST' and cart.items.exists():
+        order = Order.objects.create(user=request.user)
+        for item in cart.items.all():
+            OrderItem.objects.create(order=order, product=item.product, quantity=item.quantity)
+        cart.items.all().delete()
+        return redirect('orders')
+    return redirect('cart')
