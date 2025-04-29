@@ -88,3 +88,19 @@ class UserOrdersListView(generics.ListAPIView):
 
     def get_queryset(self):
         return Order.objects.filter(user=self.request.user).order_by('-created_at')
+    
+class PayOrderView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def post(self, request, order_id):
+        order = Order.objects.filter(id=order_id, user=request.user).first()
+        if not order:
+            return Response({"error": "سفارشی پیدا نشد"}, status=404)
+        if order.is_paid:
+            return Response({"message": "سفارش قبلاً پرداخت شده"}, status=400)
+
+        # شبیه‌سازی پرداخت موفق
+        order.is_paid = True
+        order.save()
+
+        return Response({"message": "پرداخت انجام شد"})
