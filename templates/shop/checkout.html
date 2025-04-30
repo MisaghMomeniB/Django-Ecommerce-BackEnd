@@ -1,0 +1,9 @@
+{% extends 'base.html' %}
+{% block content %}
+<h2>در حال نهایی‌سازی سفارش...</h2>
+<p>برای ثبت سفارش، روی دکمه زیر کلیک کنید:</p>
+<form method="post">
+    {% csrf_token %}
+    <button type="submit">ثبت سفارش</button>
+</form>
+{% endblock %}

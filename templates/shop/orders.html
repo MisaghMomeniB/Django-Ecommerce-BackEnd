@@ -1,0 +1,29 @@
+{% extends 'base.html' %}
+{% block content %}
+<h2>📦 سفارشات شما</h2>
+
+{% if orders %}
+{% for order in orders %}
+  <div style="margin-bottom: 2rem; border: 1px solid #ccc; padding: 1rem;">
+    <strong>سفارش #{{ order.id }}</strong>
+    <br>تاریخ: {{ order.created_at|date:"Y/m/d H:i" }}
+    <br>پرداخت: {{ order.is_paid|yesno:"پرداخت‌شده,پرداخت‌نشده" }}
+
+    <ul>
+      {% for item in order.items.all %}
+        <li>
+          {% if item.product %}
+            <strong>{{ item.product.name }}</strong> | تعداد: {{ item.quantity }} | قیمت: {{ item.product.price }} | مجموع: {{ item.total_price }}
+          {% else %}
+            ❌ محصول حذف شده
+          {% endif %}
+        </li>
+      {% endfor %}
+    </ul>
+  </div>
+{% endfor %}
+{% else %}
+  <p>سفارشی یافت نشد.</p>
+{% endif %}
+
+{% endblock %}

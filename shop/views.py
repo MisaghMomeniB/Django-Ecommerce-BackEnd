@@ -1,3 +1,6 @@
+from .models import Order, OrderItem, Cart, CartItem
+from django.contrib.auth.decorators import login_required
+from django.shortcuts import render, redirect
 from django.shortcuts import render
 from django.shortcuts import render, redirect, get_object_or_404
 from .models import Product, Cart, CartItem
@@ -74,11 +77,23 @@ class CreateOrderView(APIView):
         order = Order.objects.create(user=request.user)
 
         for item in cart.items.all():
-            OrderItem.objects.create(
-                order=order,
-                product=item.product,
-                quantity=item.quantity
-            )
+                if item.quantity > item.product.stock:
+                    return Response(
+                        {"error": f"محصول '{item.product.name}' موجودی کافی ندارد."},
+                        status=400
+                    )
+            
+                for item in cart.items.all():
+                     OrderItem.objects.create(
+                    order=order,
+                    product=item.product,
+                    quantity=item.quantity
+                )
+                item.product.stock -= item.quantity
+                if item.product.stock == 0:
+                    item.product.available = False
+                item.product.save()
+
         # پاک کردن سبد خرید
         cart.items.all().delete()
 
@@ -132,13 +147,36 @@ def view_cart(request):
 
 from django.views.decorators.csrf import csrf_exempt
 
-@csrf_exempt
+# @login_required
 def checkout(request):
-    cart = Cart.objects.get(user=request.user)
-    if request.method == 'POST' and cart.items.exists():
+    cart = Cart.objects.filter(user=request.user).first()
+    if not cart or not cart.items.exists():
+        return redirect('cart')
+
+    if request.method == 'POST':
         order = Order.objects.create(user=request.user)
+
         for item in cart.items.all():
-            OrderItem.objects.create(order=order, product=item.product, quantity=item.quantity)
+            if item.quantity > item.product.stock:
+                # برگرد به cart با پیغام خطا (برای حالت UI)
+                return redirect('cart')
+
+            OrderItem.objects.create(
+                order=order,
+                product=item.product,
+                quantity=item.quantity
+            )
+            item.product.stock -= item.quantity
+            if item.product.stock == 0:
+                item.product.available = False
+            item.product.save()
+
         cart.items.all().delete()
-        return redirect('orders')
-    return redirect('cart')
+        return redirect('orders')  # تو باید صفحه orders رو هم ساخته باشی
+
+    return render(request, 'shop/checkout.html')
+
+@login_required
+def order_list(request):
+    orders = Order.objects.filter(user=request.user, is_paid=True),
+    return render(request, 'shop/orders.html', {'orders': orders})

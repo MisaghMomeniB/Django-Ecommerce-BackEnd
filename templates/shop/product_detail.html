@@ -4,13 +4,18 @@
 <img src="{{ product.image.url }}" width="200">
 <p>{{ product.description }}</p>
 <p>قیمت: {{ product.price }} تومان</p>
+<p>موجودی: {{ product.stock }} عدد</p>
 
-<form method="post" action="{% url 'add_to_cart' product.id %}">
-  {% csrf_token %}
-  <label>تعداد:</label>
-  <input type="number" name="quantity" value="1" min="1">
-  <button type="submit">افزودن به سبد</button>
-</form>
+{% if product.available %}
+    <form method="post" action="{% url 'add_to_cart' product.id %}">
+      {% csrf_token %}
+      <label>تعداد:</label>
+      <input type="number" name="quantity" value="1" min="1" max="{{ product.stock }}">
+      <button type="submit">افزودن به سبد</button>
+    </form>
+{% else %}
+    <p style="color:red;">ناموجود</p>
+{% endif %}
 
 <a href="/">⬅ بازگشت به محصولات</a>
-{% endblock %}
+{% endblock %}  

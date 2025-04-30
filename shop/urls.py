@@ -1,6 +1,6 @@
 from django.urls import path
 from .views import ProtectedTestView
-from .views import CartView
+from .views import CartView, order_list
 from .views import CreateOrderView, UserOrdersListView, PayOrderView
 from .views import product_list, product_detail, add_to_cart, view_cart, checkout
 
@@ -13,6 +13,7 @@ urlpatterns = [
     path('protected/', ProtectedTestView.as_view(), name='protected'),
     path('cart/', CartView.as_view(), name='cart'),
     path('checkout/', CreateOrderView.as_view(), name='checkout'),
-    path('orders/', UserOrdersListView.as_view(), name='user-orders'),
     path('orders/<int:order_id>/pay/', PayOrderView.as_view(), name='pay-order'),
+    path('orders/', order_list, name='orders')
 ]
+
